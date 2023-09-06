@@ -72,6 +72,7 @@
         <div class="sidebar-divider">
             File
         </div>
+            <div class="shape-item" onclick="createNewCircuit()">New Diagram</div>
             <div>
                 <input type="file" id="loadFile" accept=".json" style="display: none;">
                 <button id="loadButton">Load Logic Gates</button>
@@ -80,7 +81,18 @@
                 <input type="text" id="fileName" value="logic_gates" placeholder="File Name">
                 <button class="shape-group-toggle" Id="saveButton">Save Logic Gates</button>
             </div>
-
+        <div class="sidebar-divider">
+            Samples
+        </div>
+        <div class="shape-group">
+            <button class="shape-group-toggle" onclick="toggleShapeGroup(this);">Load Samples</button>
+            <div class="shape-group-content">
+                <button id="loadSample1">BCD to 7 Segment Decoder</button>
+                <button id="loadSample2">JK Flip Flop</button>
+                <button id="loadSample3">D Latch</button>
+                <button id="loadSample4">One bit Memory</button>
+            </div>
+        </div>
         <div class="sidebar-divider">
            Toolbar
         </div>
@@ -1292,9 +1304,8 @@
     input.click();
 }
 
-    // URL del archivo JSON
-    const url = 'URL_DE_TU_JSON.json';
 
+function loadFromURL(url) {
     // Utiliza la función fetch para cargar el archivo JSON
     fetch(url)
     .then(response => {
@@ -1314,13 +1325,38 @@
         shapes = loadedShapes;
         connectors = loadedConnectors;
 
-        // Luego, puedes redibujar el lienzo para mostrar las formas y conectores cargados
+        // Ajustar las coordenadas de inicio y fin de las conexiones
+        updateConnectorCoordinates();
+
+        // Llamar a la función para dibujar
         redraw();
     })
     .catch(error => {
         console.error('Error al cargar el archivo JSON:', error);
     });
+}
 
+    // URL del archivo JSON
+
+    const loadSample1 = document.getElementById('loadSample1');
+    loadSample1.addEventListener('click', function () {
+        loadFromURL('https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/BCD_to_7_Segment_Gates.json');
+    });
+
+    const loadSample2 = document.getElementById('loadSample2');loadSample2
+    loadSample2.addEventListener('click', function () {
+        loadFromURL('https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/JK_Flip_Flop.json');
+    });
+
+    const loadSample3 = document.getElementById('loadSample3');loadSample3
+    loadSample3.addEventListener('click', function () {
+        loadFromURL('https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/D_Latch.json');
+    });
+
+    const loadSample4 = document.getElementById('loadSample4');loadSample4
+    loadSample4.addEventListener('click', function () {
+        loadFromURL('https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/One_Bit_Memory.json');
+    });
 
         // Función para actualizar las coordenadas de inicio y fin de las conexiones
         function updateConnectorCoordinates() {
@@ -1574,6 +1610,19 @@ function showOutput(bcd,bcdInput) {
         }
     });
 }
+
+function createNewCircuit() {
+    // Elimina todas las formas y conectores existentes
+    shapes = [];
+    connectors = [];
+
+    // Redibujar para limpiar el lienzo
+    redraw();
+}
+
+    </script>
+</body>
+</html>
 
 
     </script>
