@@ -101,6 +101,12 @@
                 <text x="0" y="15" fill="#000" font-weight="bold">Aa</text>
               </svg>
         </div>
+        <div class="shape-item">
+            <label for="zoomSlider">Zoom:</label>
+            <input type="range" id="zoomSlider" min="10" max="200" step="10" value="100" oninput="zoomCanvas()">
+            <span id="zoomValue">100%</span>
+        </div>
+        <div class="shape-item" onclick="generateTruthTable()">Generate Truth Table</div>
         <div class="sidebar-divider">
             Input Controls
         </div>
@@ -455,7 +461,7 @@
         </div>
     </div>
     <div class="canvas-container">
-        <canvas id="myCanvas" width="2000" height="700"></canvas>
+        <canvas id="myCanvas" width="4000" height="4000" ondblclick="editShapeLabel(event)"></canvas>
     </div>
     <script>
         const canvas = document.getElementById('myCanvas');
@@ -492,6 +498,54 @@
 
         // Llama a la función para dibujar el patrón cuadriculado cuando la página se carga
         drawPattern();
+
+        const zoomSlider = document.getElementById('zoomSlider');
+        const zoomValue = document.getElementById('zoomValue');
+        const canvasContainer = document.querySelector('.canvas-container');
+
+        function zoomCanvas() {
+            const zoomLevel = zoomSlider.value;
+            zoomValue.textContent = `${zoomLevel}%`;
+
+            // Calcula el nuevo ancho y alto del canvas según el zoom
+            const newWidth = (canvas.width * zoomLevel) / 100;
+            const newHeight = (canvas.height * zoomLevel) / 100;
+
+            // Actualiza el tamaño del canvas
+            canvas.style.width = `${newWidth}px`;
+            canvas.style.height = `${newHeight}px`;
+
+            // Permite el overflow en el contenedor del canvas
+            canvasContainer.style.overflow = 'auto';
+
+            // Redibuja el contenido del canvas
+            redraw();
+        }
+
+        let isEditingLabel = false; // Variable para controlar la edición del label
+        let editedShape = null; // Variable para rastrear la forma en edición
+
+        function editShapeLabel(event) {
+            const mouseX = event.offsetX;
+            const mouseY = event.offsetY;
+
+            // Verifica si se hizo doble clic en una forma para editar su label
+            for (const shape of shapes) {
+                if (
+                    mouseX >= shape.x && mouseX <= shape.x + shape.width &&
+                    mouseY >= shape.y && mouseY <= shape.y + shape.height
+                ) {
+                    isEditingLabel = true;
+                    editedShape = shape;
+                    const newLabel = prompt("Editar label:", editedShape.label); // Muestra un cuadro de diálogo para editar el label
+                    if (newLabel !== null) { // Comprueba si se ingresó un nuevo label
+                        editedShape.label = newLabel;
+                        redraw();
+                    }
+                    return;
+                }
+            }
+        }
 
         function toggleShapeGroup(button) {
             var content = button.nextElementSibling;
@@ -1565,6 +1619,12 @@ canvas.addEventListener('click', (event) => {
         drawConnector(connector);
     }
 
+
+    if (isEditingLabel) {
+        isEditingLabel = false;
+        editedShape = null;
+    }
+
 });
 
 
@@ -1618,6 +1678,65 @@ function createNewCircuit() {
 
     // Redibujar para limpiar el lienzo
     redraw();
+}
+
+function generateTruthTable() {
+    // Verificar si hay al menos una entrada y una salida
+    const inputShapes = shapes.filter(shape => shape.type === "InputL");
+    const outputShapes = shapes.filter(shape => shape.type === "OutPutL");
+    
+    if (inputShapes.length === 0 || outputShapes.length === 0) {
+        alert("Debe haber al menos una entrada y una salida en el circuito para generar la tabla de verdad.");
+        return;
+    }
+
+    // Crear un objeto que representará la tabla de verdad
+    const truthTable = [];
+
+    // Obtener las etiquetas de las entradas
+    const inputLabels = inputShapes.map(shape => shape.label);
+
+    // Obtener las etiquetas de las salidas
+    const outputLabels = outputShapes.map(shape => shape.label);
+
+    // Calcular la cantidad total de combinaciones posibles
+    const totalCombinations = 2 ** inputLabels.length;
+
+    // Generar todas las combinaciones posibles de entradas y evaluar el circuito
+    for (let i = 0; i < totalCombinations; i++) {
+        const binaryInputs = getBinaryString(i, inputLabels.length);
+        const inputValues = binaryInputs.split('').map(Number);
+
+        // Configurar los valores de las entradas
+        inputShapes.forEach((shape, index) => {
+            shape.color = inputValues[index] === 0 ? "red" : "green";
+            shape.outputs[0].label = `Output A: ${inputValues[index]}`;
+        });
+
+        // Evaluar el circuito y obtener los valores de las salidas
+        const outputValues = outputShapes.map(shape => {
+            evaluateOutput(shape);
+            return shape.color === "green" ? 1 : 0;
+        });
+
+        // Agregar esta combinación a la tabla de verdad
+        truthTable.push([...inputValues, ...outputValues]);
+    }
+
+    // Imprimir la tabla de verdad en la consola
+    console.log("Tabla de Verdad:");
+    console.log("Entradas:", inputLabels.join(", "));
+    console.log("Salidas:", outputLabels.join(", "));
+    console.table(truthTable);
+}
+
+function getBinaryString(number, length) {
+    // Convierte un número decimal a una cadena binaria con relleno de ceros
+    let binaryString = number.toString(2);
+    while (binaryString.length < length) {
+        binaryString = "0" + binaryString;
+    }
+    return binaryString;
 }
 
     </script>
