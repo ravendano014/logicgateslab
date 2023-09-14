@@ -5,7 +5,7 @@ The program is a web-based interactive diagram editor for creating and simulatin
 
 ![Live Demo]([https://github.com/ravendano014/logicgateslab/blob/main/Demo.gif](https://ravendano014.github.io/logicgateslab/index.html)) 
  
-## Overview
+## Overview 
 
 The Digital Logic Circuit Simulator is a web-based interactive editor and simulator for digital logic circuits. This tool allows users to create, visualize, and simulate various digital logic circuits by dragging and dropping logic gate shapes onto a canvas, connecting them with wires, and observing their behavior.
 
