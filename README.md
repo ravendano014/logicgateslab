@@ -3,7 +3,7 @@ The program is a web-based interactive diagram editor for creating and simulatin
 
 # Digital Logic Circuit Simulator
 
-![Live Demo]([https://github.com/ravendano014/logicgateslab/blob/main/Demo.gif](https://ravendano014.github.io/logicgateslab/index.html)) 
+![Live Demo][https://github.com/ravendano014/logicgateslab/blob/main/Demo.gif](https://ravendano014.github.io/logicgateslab/index.html)
  
 ## Overview 
 
