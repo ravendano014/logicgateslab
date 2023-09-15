@@ -81,6 +81,29 @@
                 <input type="text" id="fileName" value="logic_gates" placeholder="File Name">
                 <button class="shape-group-toggle" Id="saveButton">Save Logic Gates</button>
             </div>
+            <div id="properties" style="display: none;">
+                <div class="sidebar-divider">
+                    Properties
+                </div>
+                <label for="shapeLabel">label:</label>
+                <input type="text" id="shapeLabel"><br>
+                <label for="shapeWidth">Width:</label>
+                <input type="number" id="shapeWidth"><br>
+                <label for="shapeHeight">Height:</label>
+                <input type="number" id="shapeHeight"><br>
+                <select id="colorSelect">
+                    <option value="red">Red</option>
+                    <option value="green">Green</option>
+                    <option value="blue">Blue</option>
+                    <option value="yellow">Yellow</option>
+                </select>
+                <!-- Campos para editar las etiquetas de los inputs y outputs -->
+                <h4>Inputs:</h4>
+                <div id="inputsContainer"></div>
+                <h4>Outputs:</h4>
+                <div id="outputsContainer"></div>
+                <button id="applyProperties">Apply</button>
+            </div>
         <div class="sidebar-divider">
             Samples
         </div>
@@ -781,7 +804,7 @@
                      sodipodi:role="line">K</tspan></text>
               </g>
             </svg>
-           
+            
         </div>
         <div class="sidebar-divider">
             IC Components
@@ -967,7 +990,7 @@
         </div>
     </div>
     <div class="canvas-container">
-        <canvas id="myCanvas" width="4000" height="4000" ondblclick="editShapeLabel(event)"></canvas>
+        <canvas id="myCanvas" width="4000" height="4000"></canvas>
     </div>
     <script>
         const canvas = document.getElementById('myCanvas');
@@ -1059,31 +1082,6 @@
 
             // Habilita el overflow en el contenedor del canvas
             canvasContainer.style.overflow = 'auto';
-        }
-
-        let isEditingLabel = false; // Variable para controlar la edición del label
-        let editedShape = null; // Variable para rastrear la forma en edición
-
-        function editShapeLabel(event) {
-            const mouseX = event.offsetX;
-            const mouseY = event.offsetY;
-
-            // Verifica si se hizo doble clic en una forma para editar su label
-            for (const shape of shapes) {
-                if (
-                    mouseX >= shape.x && mouseX <= shape.x + shape.width &&
-                    mouseY >= shape.y && mouseY <= shape.y + shape.height
-                ) {
-                    isEditingLabel = true;
-                    editedShape = shape;
-                    const newLabel = prompt("Editar label:", editedShape.label); // Muestra un cuadro de diálogo para editar el label
-                    if (newLabel !== null) { // Comprueba si se ingresó un nuevo label
-                        editedShape.label = newLabel;
-                        redraw();
-                    }
-                    return;
-                }
-            }
         }
 
         function toggleShapeGroup(button) {
@@ -1195,6 +1193,7 @@
                 }
             }
 
+
             if (isDragging) {
                 isDragging = false;
                 // selectedShape = null;
@@ -1272,7 +1271,33 @@
 
             }
 
+             // Verifica si se hizo clic en un punto de la línea de un conector existente
+            for (const connector of connectors) {
+                const startPoint = { x: connector.startShape.x + connector.startOutput.x, y: connector.startShape.y + connector.startOutput.y };
+                const endPoint = { x: connector.endShape.x + connector.endInput.x, y: connector.endShape.y + connector.endInput.y };
+
+                // Calcula la distancia del punto de clic al segmento de línea
+                const distance = pointToLineDistance({ x: mouseX, y: mouseY }, startPoint, endPoint);
+
+                // Si la distancia es menor a un valor umbral (puedes ajustar este valor según tu necesidad), agrega una ramificación
+                if (distance < 10) {
+                    console.log(connector.startShape);
+                    addBranch(connector, { x: mouseX, y: mouseY });
+                    break; // Puedes detener el bucle si solo deseas agregar una ramificación al primer conector que cumple la condición
+                }
+            }
+
         });
+
+        // Función para calcular la distancia entre un punto y un segmento de línea
+        function pointToLineDistance(point, lineStart, lineEnd) {
+            const lineLength = Math.sqrt((lineEnd.x - lineStart.x) ** 2 + (lineEnd.y - lineStart.y) ** 2);
+            if (lineLength === 0) return Math.sqrt((point.x - lineStart.x) ** 2 + (point.y - lineStart.y) ** 2);
+
+            const t = Math.max(0, Math.min(1, ((point.x - lineStart.x) * (lineEnd.x - lineStart.x) + (point.y - lineStart.y) * (lineEnd.y - lineStart.y)) / (lineLength ** 2)));
+            const projection = { x: lineStart.x + t * (lineEnd.x - lineStart.x), y: lineStart.y + t * (lineEnd.y - lineStart.y) };
+            return Math.sqrt((point.x - projection.x) ** 2 + (point.y - projection.y) ** 2);
+        }
 
         function createConnector(startShape, startOutput, endShape, endInput) {
             // Crea un conector desde el output al input
@@ -1452,6 +1477,8 @@
             ctx.fill();
         }
 
+
+
         function drawConnector(connector) {
            
             const startX = connector.startShape.x + connector.startOutput.x;
@@ -1488,6 +1515,22 @@
             */
         }
 
+        function addBranch(connector, startPoint) {
+            // Dibuja una línea desde el punto de origen al input del endShape
+            ctx.beginPath();
+            ctx.moveTo(startPoint.x, startPoint.y);
+            ctx.stroke();
+
+            // Dibuja un pequeño círculo en el punto de origen
+            drawCircle(startPoint);
+
+            isDrawingConnector = true;
+            startShape = connector.startShape;
+            startOutput = connector.startOutput;
+
+        }
+
+
         function drawShape(shape) {                        
             ctx.beginPath();
             // ctx.rect(shape.x, shape.y, shape.width, shape.height);
@@ -1506,13 +1549,13 @@
                     ctx.fillStyle = "gray";
                     drawPolygon(shape,polygons[key],6);
                 }
-            }
+            } 
         } else if(shape.type=="Pin14"){
             moveLabel =  150;
             drawIC(shape.x, shape.y, 100, 180, 7);
         } else {
             if(shape.type=="D_Flip_Flop" || shape.type=="T_Flip_Flop" || shape.type=="JK_Flip_Flop"){
-                moveLabel = 55;
+                moveLabel = 55; 
             } else {
                 moveLabel = 10;
             }    
@@ -1525,7 +1568,7 @@
         }
 
             // Cambiar el color de la forma InputL, AND, OR, NOT o OutPutL
-            if (shape.type === "InputL" || shape.type === "AND" || shape.type === "OR" || shape.type === "NOT" || shape.type === "NAND" || shape.type === "NOR" || shape.type === "NAND3" || shape.type === "NOR3" || shape.type === "XOR" || shape.type === "XNOR" || shape.type === "AND3" || shape.type === "AND4" || shape.type === "AND5" || shape.type === "OR3" || shape.type === "OR4" || shape.type === "OR5" || shape.type === "OutPutL" || shape.type === "Pin14") {
+            if (shape.type === "InputL" || shape.type === "AND" || shape.type === "OR" || shape.type === "NOT" || shape.type === "NAND" || shape.type === "NOR" || shape.type === "NAND3" || shape.type === "NOR3" || shape.type === "XOR" || shape.type === "XNOR" || shape.type === "AND3" || shape.type === "AND4" || shape.type === "AND5" || shape.type === "OR3" || shape.type === "OR4" || shape.type === "OR5" || shape.type === "Pin14") {
                 ctx.fillStyle = shape.color;
                  //ctx.fillRect(shape.x, shape.y, shape.width, shape.height);
             }
@@ -1540,6 +1583,12 @@
                 for (const input of shape.inputs) {
                     drawCircle({ x: shape.x + input.x, y: shape.y + input.y});
                     drawText({ x: shape.x + input.x, y: shape.y + input.y }, input.label);
+                }
+                if (shape.type === "OutPutL"){
+                    ctx.fillStyle = shape.color;
+                    ctx.beginPath();
+                    ctx.arc(shape.x+23, shape.y+23, 21, 0, Math.PI * 2);
+                    ctx.fill();
                 }
             }
 
@@ -1593,6 +1642,7 @@
                 name: randomName(),
                 isRunning: false, // Indicador para controlar si el reloj está en funcionamiento
                 intervalId: null, // Identificador del intervalo para el pulso
+                color: 'white' // Inicialmente blanco
             };
 
             // Define los puntos de entrada y salida para las formas creadas desde la barra lateral
@@ -2181,11 +2231,6 @@ canvas.addEventListener('click', (event) => {
     }
 
 
-    if (isEditingLabel) {
-        isEditingLabel = false;
-        editedShape = null;
-    }
-
 });
 
 
@@ -2245,7 +2290,7 @@ function generateTruthTable() {
     // Verificar si hay al menos una entrada y una salida
     const inputShapes = shapes.filter(shape => shape.type === "InputL");
     const outputShapes = shapes.filter(shape => shape.type === "OutPutL");
-   
+    
     if (inputShapes.length === 0 || outputShapes.length === 0) {
         alert("Debe haber al menos una entrada y una salida en el circuito para generar la tabla de verdad.");
         return;
@@ -2351,6 +2396,104 @@ function buildComponent(){
 
     // Redibuja el contenido del canvas
     redraw();
+}
+
+// Agregar un evento de contexto al lienzo para mostrar las propiedades al hacer clic derecho
+canvas.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+    const mouseX = event.offsetX;
+    const mouseY = event.offsetY;
+
+    // Verificar si se hizo clic en una forma
+    for (const shape of shapes) {
+        if (
+            mouseX >= shape.x && mouseX <= shape.x + shape.width &&
+            mouseY >= shape.y && mouseY <= shape.y + shape.height
+        ) {
+            // Mostrar las propiedades de la forma
+            showShapeProperties(shape);
+            return;
+        }
+    }
+
+    // Si se hizo clic fuera de una forma, ocultar las propiedades
+    hideShapeProperties();
+});
+
+// Función para mostrar las propiedades de la forma y las etiquetas de inputs y outputs
+function showShapeProperties(shape) {
+    const propertiesDiv = document.getElementById('properties');
+    const shapeLabelInput = document.getElementById('shapeLabel');
+    const shapeWidthInput = document.getElementById('shapeWidth');
+    const shapeHeightInput = document.getElementById('shapeHeight');
+    const colorSelect = document.getElementById('colorSelect'); // Campo de selección de color
+    const applyButton = document.getElementById('applyProperties');
+    const inputsContainer = document.getElementById('inputsContainer'); // Contenedor para inputs
+    const outputsContainer = document.getElementById('outputsContainer'); // Contenedor para outputs
+
+    // Llenar los campos de entrada con las propiedades actuales de la forma
+    shapeLabelInput.value = shape.label;
+    shapeWidthInput.value = shape.width;
+    shapeHeightInput.value = shape.height;
+    colorSelect.value = shape.color; // Configurar el valor del campo de selección de color
+
+    // Eliminar campos de entrada anteriores (si los hay)
+    while (inputsContainer.firstChild) {
+        inputsContainer.removeChild(inputsContainer.firstChild);
+    }
+
+    while (outputsContainer.firstChild) {
+        outputsContainer.removeChild(outputsContainer.firstChild);
+    }
+
+    // Crear campos de entrada para las etiquetas de inputs
+    for (let i = 0; i < shape.inputs.length; i++) {
+        const inputLabelInput = document.createElement('input');
+        inputLabelInput.type = 'text';
+        inputLabelInput.value = shape.inputs[i].label;
+        inputLabelInput.placeholder = `Etiqueta del Input ${i + 1}`;
+        inputsContainer.appendChild(inputLabelInput);
+    }
+
+    // Crear campos de entrada para las etiquetas de outputs
+    for (let i = 0; i < shape.outputs.length; i++) {
+        const outputLabelInput = document.createElement('input');
+        outputLabelInput.type = 'text';
+        outputLabelInput.value = shape.outputs[i].label;
+        outputLabelInput.placeholder = `Etiqueta del Output ${i + 1}`;
+        outputsContainer.appendChild(outputLabelInput);
+    }
+
+    // Mostrar el div de propiedades
+    propertiesDiv.style.display = 'block';
+
+    // Agregar un evento al botón de aplicar para actualizar las propiedades
+    applyButton.onclick = () => {
+        shape.label = shapeLabelInput.value;
+        shape.width = parseInt(shapeWidthInput.value);
+        shape.height = parseInt(shapeHeightInput.value);
+        shape.color = colorSelect.value; // Actualizar el color desde el campo de selección de color
+
+        // Actualizar las etiquetas de inputs desde los campos de entrada
+        for (let i = 0; i < shape.inputs.length; i++) {
+            shape.inputs[i].label = inputsContainer.children[i].value;
+        }
+
+        // Actualizar las etiquetas de outputs desde los campos de entrada
+        for (let i = 0; i < shape.outputs.length; i++) {
+            shape.outputs[i].label = outputsContainer.children[i].value;
+        }
+
+        redraw();
+        hideShapeProperties();
+    };
+}
+
+
+// Función para ocultar las propiedades de la forma
+function hideShapeProperties() {
+    const propertiesDiv = document.getElementById('properties');
+    propertiesDiv.style.display = 'none';
 }
 
 
