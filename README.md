@@ -5,7 +5,7 @@ The program is a web-based interactive diagram editor for creating and simulatin
 
 https://github.com/ravendano014/logicgateslab/blob/main/Demo.gif
 
-![Live Demo](https://ravendano014.github.io/logicgateslab/index.html)
+[Live Demo](https://ravendano014.github.io/logicgateslab/index.html)
  
 ## Overview 
 
