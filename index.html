@@ -1202,7 +1202,7 @@
 
         function evaluateShapes() {
             for (const shape of shapes) {
-                if (shape.type === "AND" || shape.type === "OR" || shape.type === "NOT" || shape.type === "NAND" || shape.type === "NOR"  || shape.type === "NAND3" || shape.type === "NOR3" || shape.type === "XOR" || shape.type === "XNOR" || shape.type === "AND3" || shape.type === "AND4" || shape.type === "AND5" || shape.type === "OR3" || shape.type === "OR4" || shape.type === "OR5" || shape.type === "Pin14") {
+                if (shape.type === "AND" || shape.type === "OR" || shape.type === "NOT" || shape.type === "NAND" || shape.type === "NOR"  || shape.type === "NAND3" || shape.type === "NOR3" || shape.type === "XOR" || shape.type === "XNOR" || shape.type === "AND3" || shape.type === "AND4" || shape.type === "AND5" || shape.type === "OR3" || shape.type === "OR4" || shape.type === "OR5" || shape.type === "D_Flip_Flop" || shape.type === "T_Flip_Flop" || shape.type === "JK_Flip_Flop" || shape.type === "Pin14") {
                     evaluateGate(shape);
                 }
                 if(shape.type === "OutPutL"){
@@ -1268,6 +1268,7 @@
                     }
                     return;
                 }
+                 // console.log(connectors);
 
             }
 
@@ -1309,14 +1310,14 @@
                 isSelected: false
             };
             connectors.push(connector);
-            /*
+            
             // Imprimir información en la consola
             console.log("Nueva conexión creada:");
-            console.log("Forma de origen:", startShape.label, startShape.type);
+            console.log("Forma de origen:", startShape.name, startShape.type);
             console.log("Output de origen:", startOutput.label);
-            console.log("Forma de destino:", endShape.label, endShape.type);
+            console.log("Forma de destino:", endShape.name, endShape.type);
             console.log("Input de destino:", endInput.label);
-            */
+            
             // Verificar si es una conexión a InputL y actualizar el color y Output A
             if (endShape.type === "InputL") {
                 toggleInputColor(endShape);
@@ -1326,6 +1327,7 @@
         function toggleInputColor(inputShape) {
             inputShape.color = inputShape.color === "red" ? "green" : "red";
             inputShape.outputs[0].label = `Output A: ${inputShape.color === "red" ? '0' : '1'}`;
+            inputShape.outputs[0].value = inputShape.color === "red" ? '0' : '1'
         }
 
   function evaluateGate(gateShape) {
@@ -1334,7 +1336,7 @@
            
             // Crear un arreglo para almacenar los valores de entrada
             const inputValues = inputConnections.map(connection => {
-                return connection.startShape.outputs[0].label === "Output A: 1";
+                return connection.startShape.outputs[0].value === "1";
             });
 
             // Evaluar la operación lógica AND, OR o NOT
@@ -1354,6 +1356,11 @@
                 outputValues = inputValues.map(value => {
                     return gateShape.type === "XOR" ? (value ? 0 : 1) : (value ? 1 : 0);
                 });
+            } else if (gateShape.type === "D_Flip_Flop"  || gateShape.type === "T_Flip_Flop" || gateShape.type === "JK_Flip_Flop" ) {
+                // Flip Flops pueden tener múltiples salidas
+                outputValues = inputValues.map(value => {
+                    return gateShape.type === "D_Flip_Flop" ? (value ? 0 : 1) : (value ? 1 : 0);
+                });
             } else if (gateShape.type === "Pin14") {
                 // Pin14 pueden tener múltiples salidas
                 bcdInput = '';
@@ -1361,7 +1368,7 @@
                 result = false;
 
                 for (const connection of inputConnections) {
-                    const inputValue = connection.startShape.outputs[0].label === "Output A: 1";
+                    const inputValue = connection.startShape.outputs[0].value === "1";
                    
                     if(inputValue){
                         bcdInput = bcdInput + '1';
@@ -1388,6 +1395,7 @@
                 gateShape.color = outputValues.every(value => value === true) ? "green" : "red";
                 for (let i = 0; i < gateShape.outputs.length; i++) {
                     gateShape.outputs[i].label = `Output ${String.fromCharCode(65 + i)}: ${outputValues[i] ? '1' : '0'}`;
+                    gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
                 }
             }
         }
@@ -1395,14 +1403,16 @@
 
         function evaluateOutput(outputShape) {
             // Obtener las conexiones entrantes al AND, OR o NOT
-            const inputConnection = connectors.find(connector => connector.endShape === outputShape);
-
+            const inputConnection = connectors.find(connector => connector.endShape.name === outputShape.name);
+            
             if (inputConnection) {
+                // console.log(inputConnection);
                 // Obtener el valor del conector
-                const inputValue = inputConnection.startShape.outputs[0].label === "Output A: 1";
-
+                const inputValue = inputConnection.startShape.outputs[0].value === "1";
+                
                 // Cambiar el color de OutPutL según el valor del conector
                 outputShape.color = inputValue ? "green" : "red";
+
             }
         }
 
@@ -1411,7 +1421,7 @@
             const inputConnections = connectors.filter(connector => connector.endShape === displayShape);
 
             for (const connection of inputConnections) {
-                const inputValue = connection.startShape.outputs[0].label === "Output A: 1";
+                const inputValue = connection.startShape.outputs[0].value === "1";
                 segmentColor = inputValue ? "blue" : "gray";
                 ctx.fillStyle = segmentColor; // Establece el color segun el input
                 segmentValue = inputValue ? "1" : "0";
@@ -1647,10 +1657,10 @@
 
             // Define los puntos de entrada y salida para las formas creadas desde la barra lateral
             if (shapeType === "InputL") {
-                newShape.outputs.push({ x: 50, y: 25, label: `Output A: 0` });
+                newShape.outputs.push({ x: 50, y: 25, label: `Output A: 0`, value: 0, name: randomName() });
                 newShape.color = "red"; // Inicialmente rojo
             } else if (shapeType === "OutPutL") {
-                newShape.inputs.push({ x: 0, y: 25, label: 'Input A' });
+                newShape.inputs.push({ x: 0, y: 25, label: 'Input A', value: 0, name: randomName() });
 
                 // Evaluar el valor del OutputL al crearlo
                 evaluateOutput(newShape);
@@ -1658,136 +1668,136 @@
             } else if (shapeType === "Text") {
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "Clock") {
-                newShape.outputs.push({ x: 50, y: 25, label: `Output A` });
+                newShape.outputs.push({ x: 50, y: 25, label: `Output A`, value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "AND") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input B' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input B', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "OR") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input B' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input B', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "OR3") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 25, label: 'Input B' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input C' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 25, label: 'Input B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input C', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "OR4") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 25, label: 'Input B' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input C' });
-                newShape.inputs.push({ x: 0, y: 55, label: 'Input D' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 25, label: 'Input B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input C', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 55, label: 'Input D', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "OR5") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 25, label: 'Input B' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input C' });
-                newShape.inputs.push({ x: 0, y: 55, label: 'Input D' });
-                newShape.inputs.push({ x: 0, y: 70, label: 'Input E' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 25, label: 'Input B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input C', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 55, label: 'Input D', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 70, label: 'Input E', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "NOT") {
-                newShape.inputs.push({ x: 0, y: 25, label: 'Input A' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output B' });
+                newShape.inputs.push({ x: 0, y: 25, label: 'Input A', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output B', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "NAND") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input B' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input B', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "NOR") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input B' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input B', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "NAND3") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input B' });
-                newShape.inputs.push({ x: 0, y: 70, label: 'Input C' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 70, label: 'Input C', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "NOR3") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input B' });
-                newShape.inputs.push({ x: 0, y: 70, label: 'Input C' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 70, label: 'Input C', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "XOR") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input B' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input B', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "XNOR") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input B' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input B', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "AND3") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 25, label: 'Input B' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input C' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 25, label: 'Input B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input C', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "AND4") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 25, label: 'Input B' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input C' });
-                newShape.inputs.push({ x: 0, y: 55, label: 'Input D' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 25, label: 'Input B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input C', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 55, label: 'Input D', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "AND5") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 25, label: 'Input B' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input C' });
-                newShape.inputs.push({ x: 0, y: 55, label: 'Input D' });
-                newShape.inputs.push({ x: 0, y: 70, label: 'Input E' });
-                newShape.outputs.push({ x: 100, y: 25, label: 'Output A' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 25, label: 'Input B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input C', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 55, label: 'Input D', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 70, label: 'Input E', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 25, label: 'Output A', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "Display") {
-                newShape.inputs.push({ x: 0, y: 10, label: 'Input A' });
-                newShape.inputs.push({ x: 0, y: 25, label: 'Input B' });
-                newShape.inputs.push({ x: 0, y: 40, label: 'Input C' });
-                newShape.inputs.push({ x: 0, y: 55, label: 'Input D' });
-                newShape.inputs.push({ x: 0, y: 70, label: 'Input E' });
-                newShape.inputs.push({ x: 0, y: 85, label: 'Input F' });
-                newShape.inputs.push({ x: 0, y: 100, label: 'Input G' });
+                newShape.inputs.push({ x: 0, y: 10, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 25, label: 'Input B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 40, label: 'Input C', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 55, label: 'Input D', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 70, label: 'Input E', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 85, label: 'Input F', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 100, label: 'Input G', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType === "D_Flip_Flop") {
-                newShape.inputs.push({ x: 0, y: 30, label: 'D' });
-                newShape.inputs.push({ x: 0, y: 70, label: 'CLK' });
-                newShape.outputs.push({ x: 100, y: 30, label: 'Q' });
-                newShape.outputs.push({ x: 100, y: 70, label: 'Q´' });
+                newShape.inputs.push({ x: 0, y: 30, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 70, label: 'Input B', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 30, label: 'Output A', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 70, label: 'Output B', value: 0, name: randomName() });
             } else if (shapeType === "T_Flip_Flop") {
-                newShape.inputs.push({ x: 0, y: 30, label: 'T' });
-                newShape.inputs.push({ x: 0, y: 70, label: 'CLK' });
-                newShape.outputs.push({ x: 100, y: 30, label: 'Q' });
-                newShape.outputs.push({ x: 100, y: 70, label: 'Q´' });
+                newShape.inputs.push({ x: 0, y: 30, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 70, label: 'Input B', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 30, label: 'Output A', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 70, label: 'Output B', value: 0, name: randomName() });
             } else if (shapeType === "JK_Flip_Flop") {
-                newShape.inputs.push({ x: 0, y: 30, label: 'J' });
-                newShape.inputs.push({ x: 0, y: 50, label: 'CLK' });
-                newShape.inputs.push({ x: 0, y: 70, label: 'K' });
-                newShape.outputs.push({ x: 100, y: 30, label: 'Q' });
-                newShape.outputs.push({ x: 100, y: 70, label: 'Q´' });
+                newShape.inputs.push({ x: 0, y: 30, label: 'Input A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 50, label: 'Input B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 0, y: 70, label: 'Input C', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 30, label: 'Output A', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 100, y: 70, label: 'Output B', value: 0, name: randomName() });
             } else if (shapeType === "Pin14") {
-                newShape.inputs.push({ x: 20, y: 25, label: 'A' });
-                newShape.inputs.push({ x: 20, y: 50, label: 'B' });
-                newShape.inputs.push({ x: 20, y: 75, label: 'C' });
-                newShape.inputs.push({ x: 20, y: 100, label: 'D' });
-                newShape.inputs.push({ x: 20, y: 125, label: 'BI' });
-                newShape.inputs.push({ x: 20, y: 150, label: 'RBO' });
-                newShape.inputs.push({ x: 20, y: 175, label: 'LT' });
-                newShape.outputs.push({ x: 175, y: 25, label: 'QA' });
-                newShape.outputs.push({ x: 175, y: 50, label: 'QB' });
-                newShape.outputs.push({ x: 175, y: 75, label: 'QC' });
-                newShape.outputs.push({ x: 175, y: 100, label: 'QD' });
-                newShape.outputs.push({ x: 175, y: 125, label: 'QE' });
-                newShape.outputs.push({ x: 175, y: 150, label: 'QF' });
-                newShape.outputs.push({ x: 175, y: 175, label: 'QG' });
+                newShape.inputs.push({ x: 20, y: 25, label: 'A', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 20, y: 50, label: 'B', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 20, y: 75, label: 'C', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 20, y: 100, label: 'D', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 20, y: 125, label: 'BI', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 20, y: 150, label: 'RBO', value: 0, name: randomName() });
+                newShape.inputs.push({ x: 20, y: 175, label: 'LT', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 175, y: 25, label: 'QA', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 175, y: 50, label: 'QB', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 175, y: 75, label: 'QC', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 175, y: 100, label: 'QD', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 175, y: 125, label: 'QE', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 175, y: 150, label: 'QF', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 175, y: 175, label: 'QG', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             }
 
