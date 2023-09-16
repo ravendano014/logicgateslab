@@ -1386,7 +1386,9 @@
                 for (let i = 0; i < gateShape.outputs.length; i++) {
 
                     gateShape.outputs[i].label = `Output ${String.fromCharCode(65 + i)}: ${segments[i] ? '1' : '0'}`;
+                    gateShape.outputs[i].value = segments[i] ? '1' : '0';
                 }
+                 // console.log(connectors);
                
             }
 
@@ -1420,8 +1422,10 @@
             // Obtener las conexiones entrantes al AND, OR o NOT
             const inputConnections = connectors.filter(connector => connector.endShape === displayShape);
 
+            i=0;
             for (const connection of inputConnections) {
-                const inputValue = connection.startShape.outputs[0].value === "1";
+                const inputValue = connection.startShape.outputs[i].value === "1";
+                i++;
                 segmentColor = inputValue ? "blue" : "gray";
                 ctx.fillStyle = segmentColor; // Establece el color segun el input
                 segmentValue = inputValue ? "1" : "0";
@@ -2283,6 +2287,7 @@ function showOutput(bcd,bcdInput) {
         console.log(bcd.outputs[segments[index]].label);
         if (segments[index]) {
            bcd.outputs[segments[index]].label = `Q : ${clockShape.color === "blue" ? '0' : '1'}`;
+           bcd.outputs[segments[index]].value = `${clockShape.color === "blue" ? '0' : '1'}`;
         }
     });
 }
