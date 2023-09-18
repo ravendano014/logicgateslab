@@ -1002,31 +1002,6 @@
                 </g>
             </svg>
         </div>
-        <div class="shape-item" draggable="true" ondragstart="drag(event)" data-shape-type="IC7400">
-            <svg width="40" height="60" xmlns="http://www.w3.org/2000/svg" id="IC7400">
-                <g>
-                 <title>IC 7400</title>
-                 <rect stroke="#000" id="svg_1" height="48.62498" width="25.62499" y="5.40001" x="7.34999" fill="#fff"/>
-                 <rect stroke="#000" id="svg_3" height="0" width="2.99999" y="16.9999" x="3.50003" fill="#fff"/>
-                 <rect stroke="#000" id="svg_4" height="1.75" width="2.99999" y="14.74991" x="3.37503" fill="#fff"/>
-                 <rect stroke="#000" id="svg_5" height="1.625" width="2.99999" y="22.1249" x="3.37503" fill="#fff"/>
-                 <rect stroke="#000" id="svg_6" height="1.625" width="2.99999" y="28.87488" x="3.50003" fill="#fff"/>
-                 <rect stroke="#000" id="svg_7" height="1.75" width="2.99999" y="8.49992" x="3.50003" fill="#fff"/>
-                 <rect stroke="#000" id="svg_8" height="1.625" width="2.99999" y="35.74987" x="3.37503" fill="#fff"/>
-                 <rect stroke="#000" id="svg_9" height="1.625" width="2.99999" y="42.37486" x="3.50003" fill="#fff"/>
-                 <rect stroke="#000" id="svg_10" height="1.625" width="2.99999" y="49.24984" x="3.37503" fill="#fff"/>
-                 <rect stroke="#000" id="svg_11" height="1.75" width="2.99999" y="8.74992" x="33.87497" fill="#fff"/>
-                 <rect stroke="#000" id="svg_12" height="1.75" width="2.99999" y="15.12491" x="33.87497" fill="#fff"/>
-                 <rect stroke="#000" id="svg_13" height="1.75" width="2.99999" y="21.9999" x="33.99997" fill="#fff"/>
-                 <rect stroke="#000" id="svg_14" height="1.75" width="2.99999" y="29.24988" x="33.99997" fill="#fff"/>
-                 <rect stroke="#000" id="svg_15" height="1.75" width="2.99999" y="36.24987" x="33.99997" fill="#fff"/>
-                 <rect stroke="#000" id="svg_16" height="1.75" width="2.99999" y="42.49986" x="33.99997" fill="#fff"/>
-                 <rect stroke="#000" id="svg_17" height="1.75" width="2.99999" y="48.74984" x="33.87497" fill="#fff"/>
-                 <ellipse ry="2.25" rx="2.25" id="svg_18" cy="9.74992" cx="20" stroke="#000" fill="#fff"/>
-                </g>
-                <text x="10" y="30" fill="#000"  font-size="6px" font-weight="bold">IC 7400</text>
-            </svg>
-        </div>
         <div class="shape-item" draggable="true" ondragstart="drag(event)" data-shape-type="IC7408">
             <svg width="40" height="60" xmlns="http://www.w3.org/2000/svg" id="IC7408">
                 <g>
@@ -1604,59 +1579,83 @@
         } else if (gateShape.type === "IC7408") {
                 // Flip Flops pueden tener múltiples salidas
                 outputValues = [];
-                outputValues[0] = logicvalue(andGate(inputValues[0],inputValues[1]));
-                outputValues[1] = logicvalue(andGate(inputValues[2],inputValues[3]));
+                outputValues[0] = andGate(inputValues[0],inputValues[1]);
+                outputValues[1] = andGate(inputValues[2],inputValues[3]);
                 // Output 2 Gnd
-                outputValues[3] = logicvalue(andGate(inputValues[4],inputValues[5]));
-                outputValues[4] = logicvalue(andGate(inputValues[6],inputValues[7]));
+                outputValues[3] = andGate(inputValues[4],inputValues[5]);
+                outputValues[4] = andGate(inputValues[6],inputValues[7]);
                 // Input 5 Vcc
+                for (let i = 0; i < gateShape.outputs.length; i++) {
+                    gateShape.outputs[i].label = `OutPut: ${ outputValues[i] ? '1' : '0'}`;
+                    gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
+                }
         } else if (gateShape.type === "IC7400") {
                 // Flip Flops pueden tener múltiples salidas
                 outputValues = [];
-                outputValues[0] = logicvalue(nandGate(inputValues[0],inputValues[1]));
-                outputValues[1] = logicvalue(nandGate(inputValues[2],inputValues[3]));
+                outputValues[0] = nandGate(inputValues[0],inputValues[1]);
+                outputValues[1] = nandGate(inputValues[2],inputValues[3]);
                 // Output 2 Gnd
-                outputValues[3] = logicvalue(nandGate(inputValues[4],inputValues[5]));
-                outputValues[4] = logicvalue(nandGate(inputValues[6],inputValues[7]));
-                // Input 5 Vcc  
+                outputValues[3] = nandGate(inputValues[4],inputValues[5]);
+                outputValues[4] = nandGate(inputValues[6],inputValues[7]);
+                // Input 5 Vcc 
+                for (let i = 0; i < gateShape.outputs.length; i++) {
+                    gateShape.outputs[i].label = `OutPut: ${ outputValues[i] ? '1' : '0'}`;
+                    gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
+                }         
         } else if (gateShape.type === "IC7432") {
                 // Flip Flops pueden tener múltiples salidas
                 outputValues = [];
-                outputValues[0] = logicvalue(orGate(inputValues[0],inputValues[1]));
-                outputValues[1] = logicvalue(orGate(inputValues[2],inputValues[3]));
+                outputValues[0] = orGate(inputValues[0],inputValues[1]);
+                outputValues[1] = orGate(inputValues[2],inputValues[3]);
                 // Output 2 Gnd
-                outputValues[3] = logicvalue(orGate(inputValues[4],inputValues[5]));
-                outputValues[4] = logicvalue(orGate(inputValues[6],inputValues[7]));
-                // Input 5 Vcc  
+                outputValues[3] = orGate(inputValues[4],inputValues[5]);
+                outputValues[4] = orGate(inputValues[6],inputValues[7]);
+                // Input 5 Vcc 
+                for (let i = 0; i < gateShape.outputs.length; i++) {
+                    gateShape.outputs[i].label = `OutPut: ${ outputValues[i] ? '1' : '0'}`;
+                    gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
+                } 
         } else if (gateShape.type === "IC7402") {
                 // Flip Flops pueden tener múltiples salidas
                 outputValues = [];
-                outputValues[0] = logicvalue(norGate(inputValues[0],inputValues[1]));
-                outputValues[1] = logicvalue(norGate(inputValues[2],inputValues[3]));
+                outputValues[0] = norGate(inputValues[0],inputValues[1]);
+                outputValues[1] = norGate(inputValues[2],inputValues[3]);
                 // Output 2 Gnd
-                outputValues[3] = logicvalue(norGate(inputValues[4],inputValues[5]));
-                outputValues[4] = logicvalue(norGate(inputValues[6],inputValues[7]));
+                outputValues[3] = norGate(inputValues[4],inputValues[5]);
+                outputValues[4] = norGate(inputValues[6],inputValues[7]);
                 // Input 5 Vcc
+                for (let i = 0; i < gateShape.outputs.length; i++) {
+                    gateShape.outputs[i].label = `OutPut: ${ outputValues[i] ? '1' : '0'}`;
+                    gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
+                }
         } else if (gateShape.type === "IC7486") {
                 // Flip Flops pueden tener múltiples salidas
                 outputValues = [];
-                outputValues[0] = logicvalue(xorGate(inputValues[0],inputValues[1]));
-                outputValues[1] = logicvalue(xorGate(inputValues[2],inputValues[3]));
+                outputValues[0] = xorGate(inputValues[0],inputValues[1]);
+                outputValues[1] = xorGate(inputValues[2],inputValues[3]);
                 // Output 2 Gnd
-                outputValues[3] = logicvalue(xorGate(inputValues[4],inputValues[5]));
-                outputValues[4] = logicvalue(xorGate(inputValues[6],inputValues[7]));
+                outputValues[3] = xorGate(inputValues[4],inputValues[5]);
+                outputValues[4] = xorGate(inputValues[6],inputValues[7]);
                 // Input 5 Vcc
+                for (let i = 0; i < gateShape.outputs.length; i++) {
+                    gateShape.outputs[i].label =  `OutPut: ${ outputValues[i] ? '1' : '0'}`;
+                    gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
+                }
         } else if (gateShape.type === "IC7404") {
                 // Flip Flops pueden tener múltiples salidas
                 outputValues = [];
-                outputValues[0] = logicvalue(notGate(inputValues[0]));
-                outputValues[1] = logicvalue(notGate(inputValues[1]));
-                outputValues[2] = logicvalue(notGate(inputValues[2]));
+                outputValues[0] = notGate(inputValues[0]);
+                outputValues[1] = notGate(inputValues[1]);
+                outputValues[2] = notGate(inputValues[2]);
                 // Output 2 Gnd
-                outputValues[3] = logicvalue(notGate(inputValues[3]));
-                outputValues[4] = logicvalue(notGate(inputValues[4]));
-                outputValues[5] = logicvalue(notGate(inputValues[5]));
-                // Input 5 Vcc       
+                outputValues[3] = notGate(inputValues[3]);
+                outputValues[4] = notGate(inputValues[4]);
+                outputValues[5] = notGate(inputValues[5]);
+                // Input 5 Vcc
+                for (let i = 0; i < gateShape.outputs.length; i++) {
+                    gateShape.outputs[i].label = `OutPut: ${ outputValues[i] ? '1' : '0'}`;
+                    gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
+                }       
         } else if (gateShape.type === "Pin14") {
                 // Pin14 pueden tener múltiples salidas
                 bcdInput = '';
