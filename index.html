@@ -110,10 +110,9 @@
         <div class="shape-group">
             <button class="shape-group-toggle" onclick="toggleShapeGroup(this);">Load Samples</button>
             <div class="shape-group-content">
-                <button id="loadSample1">BCD to 7 Segment Decoder</button>
-                <button id="loadSample2">JK Flip Flop</button>
-                <button id="loadSample3">D Latch</button>
-                <button id="loadSample4">One bit Memory</button>
+                <select id="elementSelector">
+                    <option value="">Select Sample</option>
+                </select>
             </div>
         </div>
         <div class="sidebar-divider">
@@ -1285,6 +1284,45 @@
             }
         }
        
+
+                // URL del JSON
+                const jsonUrl = "https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/samples.json";
+
+                // Obtener el elemento select
+                const selectElement = document.getElementById("elementSelector");
+
+                // Función para llenar el selector con opciones desde el JSON
+                function populateSelector(data) {
+                    data.forEach(item => {
+                        const option = document.createElement("option");
+                        option.value = item.url;
+                        option.text = item.name;
+                        selectElement.appendChild(option);
+                    });
+                }
+
+                // Obtener el JSON y llenar el selector
+                fetch(jsonUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        populateSelector(data);
+                    })
+                    .catch(error => {
+                        console.error("Error al obtener el JSON:", error);
+                    });
+
+                // Función para manejar la selección
+                selectElement.addEventListener("change", function() {
+                    const selectedUrl = selectElement.value;
+                    if (selectedUrl) {
+                        // Redirigir o realizar alguna acción con la URL seleccionada
+                        loadFromURL(selectedUrl);
+                    }
+                });
+
+
+
+
         ctx.lineWidth = 3;
 
         let isDrawingConnector = false;
@@ -2451,27 +2489,6 @@ function loadFromURL(url) {
     });
 }
 
-    // URL del archivo JSON
-
-    const loadSample1 = document.getElementById('loadSample1');
-    loadSample1.addEventListener('click', function () {
-        loadFromURL('https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/BCD_to_7_Segment_Gates.json');
-    });
-
-    const loadSample2 = document.getElementById('loadSample2');loadSample2
-    loadSample2.addEventListener('click', function () {
-        loadFromURL('https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/JK_Flip_Flop.json');
-    });
-
-    const loadSample3 = document.getElementById('loadSample3');loadSample3
-    loadSample3.addEventListener('click', function () {
-        loadFromURL('https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/D_Latch.json');
-    });
-
-    const loadSample4 = document.getElementById('loadSample4');loadSample4
-    loadSample4.addEventListener('click', function () {
-        loadFromURL('https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/One_Bit_Memory.json');
-    });
 
         // Función para actualizar las coordenadas de inicio y fin de las conexiones
         function updateConnectorCoordinates() {
