@@ -1649,11 +1649,13 @@
         } else if (gateShape.type === "IC7404") {
                 // Flip Flops pueden tener múltiples salidas
                 outputValues = [];
-                outputValues[0] = logicvalue(notGate(inputValues[0],inputValues[1]));
-                outputValues[1] = logicvalue(notGate(inputValues[2],inputValues[3]));
+                outputValues[0] = logicvalue(notGate(inputValues[0]));
+                outputValues[1] = logicvalue(notGate(inputValues[1]));
+                outputValues[2] = logicvalue(notGate(inputValues[2]));
                 // Output 2 Gnd
-                outputValues[3] = logicvalue(notGate(inputValues[4],inputValues[5]));
-                outputValues[4] = logicvalue(notGate(inputValues[6],inputValues[7]));
+                outputValues[3] = logicvalue(notGate(inputValues[3]));
+                outputValues[4] = logicvalue(notGate(inputValues[4]));
+                outputValues[5] = logicvalue(notGate(inputValues[5]));
                 // Input 5 Vcc       
         } else if (gateShape.type === "Pin14") {
                 // Pin14 pueden tener múltiples salidas
@@ -1963,7 +1965,7 @@
             } 
         } else if(shape.type=="Pin14" || shape.type.substring(0, 2) === "IC"){
             moveLabel =  150;
-            drawIC(shape.x, shape.y, 100, 180, 7);
+            drawIC(shape.x+15, shape.y, 60, 180, 7);
         } else {
             if(shape.type=="SR_Flip_Flop" || shape.type === "D_Flip_Flop" || shape.type=="T_Flip_Flop" || shape.type=="JK_Flip_Flop"){
                 moveLabel = 55; 
@@ -2197,31 +2199,47 @@
                 newShape.inputs.push({ x: 20, y: 125, label: 'BI', value: 0, name: randomName() });
                 newShape.inputs.push({ x: 20, y: 150, label: 'RBO', value: 0, name: randomName() });
                 newShape.inputs.push({ x: 20, y: 175, label: 'LT', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 175, y: 25, label: 'QA', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 175, y: 50, label: 'QB', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 175, y: 75, label: 'QC', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 175, y: 100, label: 'QD', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 175, y: 125, label: 'QE', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 175, y: 150, label: 'QF', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 175, y: 175, label: 'QG', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 125, y: 25, label: 'QA', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 125, y: 50, label: 'QB', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 125, y: 75, label: 'QC', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 125, y: 100, label: 'QD', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 125, y: 125, label: 'QE', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 125, y: 150, label: 'QF', value: 0, name: randomName() });
+                newShape.outputs.push({ x: 125, y: 175, label: 'QG', value: 0, name: randomName() });
                 newShape.color = "gray"; // Inicialmente gris
             } else if (shapeType.substring(0,2) === "IC") {
-                newShape.inputs.push({ x: 20, y: 25, label: '1A', value: 0, name: randomName() });
-                newShape.inputs.push({ x: 20, y: 50, label: '1B', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 20, y: 75, label: '1Y', value: 0, name: randomName() });
-                newShape.inputs.push({ x: 20, y: 100, label: '2A', value: 0, name: randomName() });
-                newShape.inputs.push({ x: 20, y: 125, label: '2B', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 20, y: 150, label: '2Y', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 20, y: 175, label: 'GND', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 175, y: 25, label: '3Y', value: 0, name: randomName() });
-                newShape.inputs.push({ x: 175, y: 50, label: '3A', value: 0, name: randomName() });
-                newShape.inputs.push({ x: 175, y: 75, label: '3B', value: 0, name: randomName() });
-                newShape.outputs.push({ x: 175, y: 100, label: '4Y', value: 0, name: randomName() });
-                newShape.inputs.push({ x: 175, y: 125, label: '4A', value: 0, name: randomName() });
-                newShape.inputs.push({ x: 175, y: 150, label: '4B', value: 0, name: randomName() });
-                newShape.inputs.push({ x: 175, y: 175, label: 'Vcc', value: 0, name: randomName() });
+                if(shapeType=="IC7404"){
+                    newShape.inputs.push({ x: 20, y: 25, label: '1A', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 20, y: 50, label: '1Y', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 20, y: 75, label: '2A', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 20, y: 100, label: '2Y', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 20, y: 125, label: '3A', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 20, y: 150, label: '3Y', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 20, y: 175, label: 'GND', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 125, y: 25, label: 'Vcc', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 125, y: 50, label: '6A', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 125, y: 75, label: '6Y', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 125, y: 100, label: '5A', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 125, y: 125, label: '5Y', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 125, y: 150, label: '4A', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 125, y: 175, label: '4Y', value: 0, name: randomName() });
+                } else {
+                    newShape.inputs.push({ x: 20, y: 25, label: '1A', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 20, y: 50, label: '1B', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 20, y: 75, label: '1Y', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 20, y: 100, label: '2A', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 20, y: 125, label: '2B', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 20, y: 150, label: '2Y', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 20, y: 175, label: 'GND', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 125, y: 25, label: 'Vcc', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 125, y: 50, label: '4B', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 125, y: 75, label: '4A', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 125, y: 100, label: '4Y', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 125, y: 125, label: '3B', value: 0, name: randomName() });
+                    newShape.inputs.push({ x: 125, y: 150, label: '3A', value: 0, name: randomName() });
+                    newShape.outputs.push({ x: 125, y: 175, label: '3Y', value: 0, name: randomName() });
+                }
                 newShape.color = "gray"; // Inicialmente gris
-            
             }
 
             shapes.push(newShape);
