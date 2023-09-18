@@ -1,0 +1,10 @@
+[
+  {
+    "name": "BCD_to_7_Segment_Gates",
+    "url": "https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/BCD_to_7_Segment_Gates.json"
+  },
+  {
+    "name": "D_Flip_Flop",
+    "url": "https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/D_Flip_Flop.json"
+  }
+]
