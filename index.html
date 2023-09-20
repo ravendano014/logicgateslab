@@ -2648,7 +2648,7 @@ redraw();
             if(shapeLabels!=0 ){
                 ctx.fillText(shape.label, shape.x + shape.width / 2, shape.y + shape.height + moveLabel);
             }
-            if(shape.type=="Text" ){
+            if(shape.type=="Text" || shape.type.substring(0, 2)=== "IC"){
                 ctx.fillText(shape.label, shape.x + shape.width / 2, shape.y + shape.height + moveLabel);
             }
 
