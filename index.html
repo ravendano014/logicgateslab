@@ -58,6 +58,7 @@ body {
   left: 0;
   overflow-y: scroll;
   padding: 10px;
+  color: var(--dk-gray-400);
 }
 
 .sidebar .close-aside {
@@ -422,7 +423,6 @@ button:hover svg {
     <div class="sidebar">
             <div>
                 <input type="file" id="loadFile" accept=".json" style="display: none;">
-                <input type="text" id="fileName" value="logic_gates" placeholder="File Name" style="display: none;">
             </div>
             <div id="properties" style="display: none;">
                 <div class="sidebar-divider">
@@ -430,10 +430,10 @@ button:hover svg {
                 </div>
                 <label for="shapeLabel">label:</label>
                 <input type="text" id="shapeLabel"><br>
-                <label for="shapeWidth">Width:</label>
-                <input type="number" id="shapeWidth"><br>
-                <label for="shapeHeight">Height:</label>
-                <input type="number" id="shapeHeight"><br>
+                <label for="shapeX">X:</label>
+                <input type="number" id="shapeX"><br>
+                <label for="shapeY">Y:</label>
+                <input type="number" id="shapeY"><br>
                 <select id="colorSelect">
                     <option value="red">Red</option>
                     <option value="green">Green</option>
@@ -445,7 +445,7 @@ button:hover svg {
                 <div id="inputsContainer"></div>
                 <h4>Outputs:</h4>
                 <div id="outputsContainer"></div>
-                <button id="applyProperties">Apply</button>
+                <button id="applyProperties" class="shape-group-toggle">Apply changes</button>
             </div>
         <div class="sidebar-divider">
             Samples
@@ -1508,6 +1508,7 @@ button:hover svg {
         <nav class="navbar navbar-expand-md">
             <div class="navbar-header">
                 <span style="color: #fff;"><b>&nbsp;&nbsp;&nbsp;Logic&nbsp;Gates</b></span><span class="main-color">&nbsp;Lab</span>
+                <span style="color: #fff;">&nbsp;&nbsp;&nbsp;Save to:<input type="text" id="fileName" placeholder="Untitled" ></span>
             </div>
             <div class="toolbar">
                 <button onclick="createNewCircuit()">
@@ -2784,8 +2785,7 @@ redraw();
             var fileName = document.getElementById('fileName').value;
 
             if (!fileName) {
-                alert('Por favor, ingrese un nombre de archivo.');
-                return;
+                fileName = 'Logic_gates';
             }
 
             // Crear un objeto que contiene el nombre del archivo y los datos a guardar
@@ -3306,8 +3306,8 @@ canvas.addEventListener('contextmenu', (event) => {
 function showShapeProperties(shape) {
     const propertiesDiv = document.getElementById('properties');
     const shapeLabelInput = document.getElementById('shapeLabel');
-    const shapeWidthInput = document.getElementById('shapeWidth');
-    const shapeHeightInput = document.getElementById('shapeHeight');
+    const shapeXInput = document.getElementById('shapeX');
+    const shapeYInput = document.getElementById('shapeY');
     const colorSelect = document.getElementById('colorSelect'); // Campo de selección de color
     const applyButton = document.getElementById('applyProperties');
     const inputsContainer = document.getElementById('inputsContainer'); // Contenedor para inputs
@@ -3315,8 +3315,8 @@ function showShapeProperties(shape) {
 
     // Llenar los campos de entrada con las propiedades actuales de la forma
     shapeLabelInput.value = shape.label;
-    shapeWidthInput.value = shape.width;
-    shapeHeightInput.value = shape.height;
+    shapeXInput.value = shape.x;
+    shapeYInput.value = shape.y;
     colorSelect.value = shape.color; // Configurar el valor del campo de selección de color
 
     // Eliminar campos de entrada anteriores (si los hay)
@@ -3352,8 +3352,8 @@ function showShapeProperties(shape) {
     // Agregar un evento al botón de aplicar para actualizar las propiedades
     applyButton.onclick = () => {
         shape.label = shapeLabelInput.value;
-        shape.width = parseInt(shapeWidthInput.value);
-        shape.height = parseInt(shapeHeightInput.value);
+        shape.x = parseInt(shapeXInput.value);
+        shape.y = parseInt(shapeYInput.value);
         shape.color = colorSelect.value; // Actualizar el color desde el campo de selección de color
 
         // Actualizar las etiquetas de inputs desde los campos de entrada
