@@ -1346,7 +1346,7 @@ button:hover svg {
             IC Components
         </div>
         <div class="shape-item" draggable="true" ondragstart="drag(event)" data-shape-type="Pin14">
-            <svg width="40" height="60" xmlns="http://www.w3.org/2000/svg" id="IC7400">
+            <svg width="40" height="60" xmlns="http://www.w3.org/2000/svg" id="Pin14">
                 <g>
                  <title>7 Decoder</title>
                  <rect stroke="#000" id="svg_1" height="48.62498" width="25.62499" y="5.40001" x="7.34999" fill="#fff"/>
@@ -1733,9 +1733,6 @@ button:hover svg {
                     }
                 });
 
-
-
-
         ctx.lineWidth = 3;
 
         let isDrawingConnector = false;
@@ -1799,8 +1796,8 @@ button:hover svg {
                 const mouseY = event.offsetY;
                 selectedShape.x = mouseX - dragOffsetX;
                 selectedShape.y = mouseY - dragOffsetY;
-                updateConnectors(selectedShape);
-                updateConnectorCoordinates();
+                //updateConnectors(selectedShape);
+                //pdateConnectorCoordinates();
                 redraw();
             }
         });
@@ -1885,7 +1882,7 @@ button:hover svg {
 
                 // Verifica si se hizo doble clic en una forma AND, OR, NOT o OutPutL
                 if (
-                    (shape.type === "AND" || shape.type === "OR" || shape.type === "NOT" || shape.type === "OutPutL" || shape.type === "NAND" || shape.type === "NOR"  || shape.type === "NAND3" || shape.type === "NOR3" || shape.type === "XOR" || shape.type === "XNOR" || shape.type === "AND3"  || shape.type === "AND4"  || shape.type === "AND5" || shape.type === "OR3" ) &&
+                    (shape.type === "AND" || shape.type === "OR" || shape.type === "NOT" || shape.type === "OutPutL" || shape.type === "NAND" || shape.type === "NOR"  || shape.type === "NAND3" || shape.type === "NOR3" || shape.type === "XOR" || shape.type === "XNOR" || shape.type === "AND3"  || shape.type === "AND4"  || shape.type === "AND5" || shape.type === "OR3" || shape.type.substring(0,2) === "IC" ) &&
                     mouseX >= shape.x && mouseX <= shape.x + shape.width &&
                     mouseY >= shape.y && mouseY <= shape.y + shape.height
                 ) {
@@ -1894,6 +1891,7 @@ button:hover svg {
                     } else {
                         evaluateGate(shape);
                     }
+
                     redraw();
                     return;
                 }
@@ -1958,8 +1956,10 @@ button:hover svg {
             console.log("Nueva conexión creada:");
             console.log("Forma de origen:", startShape.name, startShape.type);
             console.log("Output de origen:", startOutput.label);
+            console.log("Output Position:", startOutput.x, startOutput.y);
             console.log("Forma de destino:", endShape.name, endShape.type);
             console.log("Input de destino:", endInput.label);
+            console.log("Input Position:", endInput.x, endInput.y);
            
             // Verificar si es una conexión a InputL y actualizar el color y Output A
             if (endShape.type === "InputL") {
@@ -2284,6 +2284,7 @@ button:hover svg {
         function updateConnectors(updatedShape) {
             for (const connector of connectors) {
                 if (connector.startShape === updatedShape || connector.endShape === updatedShape) {
+                    // console.log(connector);
 
                     for(i = 0; i < connector.startShape.outputs.lenght; i++){
                         connector.startOutput.x = connector.startShape.outputs[i].x;
@@ -2586,7 +2587,7 @@ redraw();
                 }
             }
         } else if(shape.type=="Pin14" || shape.type.substring(0, 2) === "IC"){
-            moveLabel =  150;
+            moveLabel =  (145/shapeSize);
             drawIC(shape.x+(15/shapeSize), shape.y, (60/shapeSize), (180/shapeSize), 7);
         } else {
             if(shape.type=="SR_Flip_Flop" || shape.type === "D_Flip_Flop" || shape.type=="T_Flip_Flop" || shape.type=="JK_Flip_Flop"){
@@ -2648,7 +2649,7 @@ redraw();
             if(shapeLabels!=0 ){
                 ctx.fillText(shape.label, shape.x + shape.width / 2, shape.y + shape.height + moveLabel);
             }
-            if(shape.type=="Text" || shape.type.substring(0, 2)=== "IC"){
+            if(shape.type=="Text" | shape.type=="Pin14" || shape.type.substring(0, 2)=== "IC"){
                 ctx.fillText(shape.label, shape.x + shape.width / 2, shape.y + shape.height + moveLabel);
             }
 
