@@ -1796,8 +1796,7 @@ button:hover svg {
                 const mouseY = event.offsetY;
                 selectedShape.x = mouseX - dragOffsetX;
                 selectedShape.y = mouseY - dragOffsetY;
-                //updateConnectors(selectedShape);
-                //pdateConnectorCoordinates();
+                updateConnectorCoordinates();
                 redraw();
             }
         });
@@ -2898,8 +2897,9 @@ function drawConnector(connector) {
                     connectors = data.connectors;
 
                     // Ajustar las coordenadas de inicio y fin de las conexiones
-                    updateConnectorCoordinates();
-
+                    for (const shape of shapes) {
+                        updateConnectors(shape);
+                    } 
                     // Llamar a la función para dibujar
                     redraw();
                 } catch (error) {
@@ -2937,7 +2937,9 @@ function loadFromURL(url) {
         connectors = loadedConnectors;
 
         // Ajustar las coordenadas de inicio y fin de las conexiones
-        updateConnectorCoordinates();
+        for (const shape of shapes) {
+            updateConnectors(shape);
+        } 
 
         // Llamar a la función para dibujar
         redraw();
@@ -2958,8 +2960,8 @@ function loadFromURL(url) {
                 if (startShape && endShape) {
                     connector.startShape = startShape;
                     connector.endShape = endShape;
-                    connector.startOutput = startShape.outputs.find(output => output.label === connector.startOutput.label);
-                    connector.endInput = endShape.inputs.find(input => input.label === connector.endInput.label);
+                    connector.startOutput = startShape.outputs.find(output => output.name === connector.startOutput.name);
+                    connector.endInput = endShape.inputs.find(input => input.name === connector.endInput.name);
                 }
             }
             // console.log(booleanExp);
