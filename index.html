@@ -1519,7 +1519,32 @@ button:hover svg {
                 </g>
                 <text x="10" y="30" fill="#000"  font-size="6px" font-weight="bold">IC 7404</text>
             </svg>
-        </div>          
+        </div>  
+        <div class="shape-item" draggable="true" ondragstart="drag(event)" data-shape-type="IC7445">
+            <svg width="40" height="60" xmlns="http://www.w3.org/2000/svg" id="IC7445">
+                <g>
+                 <title>IC 7445 BCD to 7 Segment Decorder</title>
+                 <rect stroke="#000" id="svg_1" height="48.62498" width="25.62499" y="5.40001" x="7.34999" fill="#fff"/>
+                 <rect stroke="#000" id="svg_3" height="0" width="2.99999" y="16.9999" x="3.50003" fill="#fff"/>
+                 <rect stroke="#000" id="svg_4" height="1.75" width="2.99999" y="14.74991" x="3.37503" fill="#fff"/>
+                 <rect stroke="#000" id="svg_5" height="1.625" width="2.99999" y="22.1249" x="3.37503" fill="#fff"/>
+                 <rect stroke="#000" id="svg_6" height="1.625" width="2.99999" y="28.87488" x="3.50003" fill="#fff"/>
+                 <rect stroke="#000" id="svg_7" height="1.75" width="2.99999" y="8.49992" x="3.50003" fill="#fff"/>
+                 <rect stroke="#000" id="svg_8" height="1.625" width="2.99999" y="35.74987" x="3.37503" fill="#fff"/>
+                 <rect stroke="#000" id="svg_9" height="1.625" width="2.99999" y="42.37486" x="3.50003" fill="#fff"/>
+                 <rect stroke="#000" id="svg_10" height="1.625" width="2.99999" y="49.24984" x="3.37503" fill="#fff"/>
+                 <rect stroke="#000" id="svg_11" height="1.75" width="2.99999" y="8.74992" x="33.87497" fill="#fff"/>
+                 <rect stroke="#000" id="svg_12" height="1.75" width="2.99999" y="15.12491" x="33.87497" fill="#fff"/>
+                 <rect stroke="#000" id="svg_13" height="1.75" width="2.99999" y="21.9999" x="33.99997" fill="#fff"/>
+                 <rect stroke="#000" id="svg_14" height="1.75" width="2.99999" y="29.24988" x="33.99997" fill="#fff"/>
+                 <rect stroke="#000" id="svg_15" height="1.75" width="2.99999" y="36.24987" x="33.99997" fill="#fff"/>
+                 <rect stroke="#000" id="svg_16" height="1.75" width="2.99999" y="42.49986" x="33.99997" fill="#fff"/>
+                 <rect stroke="#000" id="svg_17" height="1.75" width="2.99999" y="48.74984" x="33.87497" fill="#fff"/>
+                 <ellipse ry="2.25" rx="2.25" id="svg_18" cy="9.74992" cx="20" stroke="#000" fill="#fff"/>
+                </g>
+                <text x="10" y="30" fill="#000"  font-size="6px" font-weight="bold">IC 7445</text>
+            </svg>
+        </div>            
     </div>
     <section id="wrapper">
         <nav class="navbar navbar-expand-md">
@@ -2086,7 +2111,7 @@ button:hover svg {
                     outputValues = calculateJKFlipFlop(clockInput, JInput, KInput, FFOutputvalue);
                 }
         } else if (gateShape.type === "IC7408") {
-                // Flip Flops pueden tener múltiples salidas
+                 // ICs pueden tener múltiples salidas
                 outputValues = [];
                 outputValues[0] = andGate(inputValues[0],inputValues[1]);
                 outputValues[1] = andGate(inputValues[2],inputValues[3]);
@@ -2099,7 +2124,7 @@ button:hover svg {
                     gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
                 }
         } else if (gateShape.type === "IC7400") {
-                // Flip Flops pueden tener múltiples salidas
+                 // ICs pueden tener múltiples salidas
                 outputValues = [];
                 outputValues[0] = nandGate(inputValues[0],inputValues[1]);
                 outputValues[1] = nandGate(inputValues[2],inputValues[3]);
@@ -2112,7 +2137,7 @@ button:hover svg {
                     gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
                 }        
         } else if (gateShape.type === "IC7432") {
-                // Flip Flops pueden tener múltiples salidas
+                 // ICs pueden tener múltiples salidas
                 outputValues = [];
                 outputValues[0] = orGate(inputValues[0],inputValues[1]);
                 outputValues[1] = orGate(inputValues[2],inputValues[3]);
@@ -2125,7 +2150,7 @@ button:hover svg {
                     gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
                 }
         } else if (gateShape.type === "IC7402") {
-                // Flip Flops pueden tener múltiples salidas
+                 // ICs pueden tener múltiples salidas
                 outputValues = [];
                 outputValues[0] = norGate(inputValues[0],inputValues[1]);
                 outputValues[1] = norGate(inputValues[2],inputValues[3]);
@@ -2138,7 +2163,7 @@ button:hover svg {
                     gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
                 }
         } else if (gateShape.type === "IC7486") {
-                // Flip Flops pueden tener múltiples salidas
+                 // ICs pueden tener múltiples salidas
                 outputValues = [];
                 outputValues[0] = xorGate(inputValues[0],inputValues[1]);
                 outputValues[1] = xorGate(inputValues[2],inputValues[3]);
@@ -2151,7 +2176,7 @@ button:hover svg {
                     gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
                 }
         } else if (gateShape.type === "IC7404") {
-                // Flip Flops pueden tener múltiples salidas
+                 // ICs pueden tener múltiples salidas
                 outputValues = [];
                 outputValues[0] = notGate(inputValues[0]);
                 outputValues[1] = notGate(inputValues[1]);
@@ -2165,6 +2190,33 @@ button:hover svg {
                     gateShape.outputs[i].label = `OutPut: ${ outputValues[i] ? '1' : '0'}`;
                     gateShape.outputs[i].value = outputValues[i] ? '1' : '0';
                 }      
+        } else if (gateShape.type === "IC7445") {
+            // ICs pueden tener múltiples salidas
+            bcdInput = '';
+               
+               result = false;
+
+               for (const connection of inputConnections) {
+                   const inputValue = connection.startShape.outputs[0].value === "1";
+                  
+                   if(inputValue){
+                       bcdInput = bcdInput + '1';
+                   } else {
+                       bcdInput = bcdInput + '0';
+                   }
+
+                   result = inputValue;
+
+               }
+
+               var segments = bcdToSegments(bcdInput);
+
+
+               for (let i = 0; i < gateShape.outputs.length; i++) {
+
+                   gateShape.outputs[i].label = `Output ${String.fromCharCode(65 + i)}: ${segments[i] ? '1' : '0'}`;
+                   gateShape.outputs[i].value = segments[i] ? '1' : '0';
+               } 
         } else if (gateShape.type === "Pin14") {
                 // Pin14 pueden tener múltiples salidas
                 bcdInput = '';
@@ -2583,20 +2635,39 @@ if (shapeType === "InputL") {
         newShape.outputs.push({ x: 125, y: 150, label: '4A', value: 0, name: randomName() });
         newShape.inputs.push({ x: 125, y: 175, label: '4Y', value: 0, name: randomName() });
     } else {
-        newShape.inputs.push({ x: 20, y: 25, label: '1A', value: 0, name: randomName() });
-        newShape.inputs.push({ x: 20, y: 50, label: '1B', value: 0, name: randomName() });
-        newShape.outputs.push({ x: 20, y: 75, label: '1Y', value: 0, name: randomName() });
-        newShape.inputs.push({ x: 20, y: 100, label: '2A', value: 0, name: randomName() });
-        newShape.inputs.push({ x: 20, y: 125, label: '2B', value: 0, name: randomName() });
-        newShape.outputs.push({ x: 20, y: 150, label: '2Y', value: 0, name: randomName() });
-        newShape.outputs.push({ x: 20, y: 175, label: 'GND', value: 0, name: randomName() });
-        newShape.inputs.push({ x: 125, y: 25, label: 'Vcc', value: 0, name: randomName() });
-        newShape.inputs.push({ x: 125, y: 50, label: '4B', value: 0, name: randomName() });
-        newShape.inputs.push({ x: 125, y: 75, label: '4A', value: 0, name: randomName() });
-        newShape.outputs.push({ x: 125, y: 100, label: '4Y', value: 0, name: randomName() });
-        newShape.inputs.push({ x: 125, y: 125, label: '3B', value: 0, name: randomName() });
-        newShape.inputs.push({ x: 125, y: 150, label: '3A', value: 0, name: randomName() });
-        newShape.outputs.push({ x: 125, y: 175, label: '3Y', value: 0, name: randomName() });
+        if(shapeType=="IC7445"){
+            newShape.inputs.push({ x: 20, y: 25, label: 'A', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 20, y: 50, label: 'B', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 20, y: 75, label: 'C', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 20, y: 100, label: 'D', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 20, y: 125, label: '', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 20, y: 150, label: '', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 20, y: 175, label: '', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 20, y: 200, label: 'GND', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 125, y: 25, label: 'Vcc', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 125, y: 50, label: 'a', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 125, y: 75, label: 'b', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 125, y: 100, label: 'c', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 125, y: 125, label: 'd', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 125, y: 150, label: 'e', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 125, y: 175, label: 'f', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 125, y: 200, label: 'g', value: 0, name: randomName() });
+        } else {
+            newShape.inputs.push({ x: 20, y: 25, label: '1A', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 20, y: 50, label: '1B', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 20, y: 75, label: '1Y', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 20, y: 100, label: '2A', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 20, y: 125, label: '2B', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 20, y: 150, label: '2Y', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 20, y: 175, label: 'GND', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 125, y: 25, label: 'Vcc', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 125, y: 50, label: '4B', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 125, y: 75, label: '4A', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 125, y: 100, label: '4Y', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 125, y: 125, label: '3B', value: 0, name: randomName() });
+            newShape.inputs.push({ x: 125, y: 150, label: '3A', value: 0, name: randomName() });
+            newShape.outputs.push({ x: 125, y: 175, label: '3Y', value: 0, name: randomName() });
+        }
     }
     newShape.color = "gray"; // Inicialmente gris
 }
@@ -2645,8 +2716,13 @@ redraw();
                 }
             }
         } else if(shape.type=="Pin14" || shape.type.substring(0, 2) === "IC"){
-            moveLabel =  (145/shapeSize);
-            drawIC(shape.x+(15/shapeSize), shape.y, (60/shapeSize), (180/shapeSize), 7);
+            if(shape.type=="IC7445") {
+                moveLabel =  (160/shapeSize);
+                drawIC(shape.x+(15/shapeSize), shape.y, (60/shapeSize), (200/shapeSize), 8);
+            } else {
+                moveLabel =  (145/shapeSize);
+                drawIC(shape.x+(15/shapeSize), shape.y, (60/shapeSize), (180/shapeSize), 7);
+            }    
         } else {
             if(shape.type=="SR_Flip_Flop" || shape.type === "D_Flip_Flop" || shape.type=="T_Flip_Flop" || shape.type=="JK_Flip_Flop"){
                 moveLabel = 55;
