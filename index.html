@@ -1750,6 +1750,11 @@ button:hover svg {
         let dragOffsetY = 0;
         let selectedShape = null;
         let selectedConnector = null;
+        let isMouseDown = false;
+        let selectionRect = null;
+
+        // Define una variable para mantener un registro de los shapes seleccionados
+        const selectedShapes = [];
 
         canvas.addEventListener('mousedown', (event) => {
             const mouseX = event.offsetX;
@@ -1788,9 +1793,23 @@ button:hover svg {
                 }
             }
 
+            // Si no se hizo clic en una forma, inicia la selección múltiple
+            isMouseDown = true;
+            const selectionStartX = mouseX;
+            const selectionStartY = mouseY;
+
+            // Crea un rectángulo temporal para la selección
+            selectionRect = {
+                x: selectionStartX,
+                y: selectionStartY,
+                width: 0,
+                height: 0,
+            };
+
         });
 
         canvas.addEventListener('mousemove', (event) => {
+            
             if (isDragging) {
                 const mouseX = event.offsetX;
                 const mouseY = event.offsetY;
@@ -1799,6 +1818,20 @@ button:hover svg {
                 updateConnectorCoordinates();
                 redraw();
             }
+
+            if (isMouseDown) {
+                const mouseX = event.offsetX;
+                const mouseY = event.offsetY;
+
+                // Actualiza las dimensiones del rectángulo de selección
+                selectionRect.width = mouseX - selectionRect.x;
+                selectionRect.height = mouseY - selectionRect.y;
+
+                // Redibuja para mostrar el rectángulo de selección
+                redraw();
+                drawSelectionRect(selectionRect);
+            }
+        
         });
 
         canvas.addEventListener('mouseup', (event) => {
@@ -1837,6 +1870,30 @@ button:hover svg {
                 isDragging = false;
                 // selectedShape = null;
             }
+
+            if (isMouseDown) {
+                isMouseDown = false;
+
+                // Determina las shapes que están dentro del rectángulo de selección
+                const selectedShapes = shapes.filter((shape) => {
+                    return (
+                        shape.x >= selectionRect.x &&
+                        shape.x + shape.width <= selectionRect.x + selectionRect.width &&
+                        shape.y >= selectionRect.y &&
+                        shape.y + shape.height <= selectionRect.y + selectionRect.height
+                    );
+                });
+
+                selectionRect = {x: 0, y: 0, width: 0, height: 0,};
+                drawSelectionRect(selectionRect);
+                // Limpia el rectángulo de selección temporal
+                selectionRect = null;
+
+                // Muestra en la consola las shapes seleccionadas
+                // console.log('Shapes seleccionadas:', selectedShapes);
+            }
+
+
         });
 
         function evaluateShapes() {
@@ -3125,10 +3182,9 @@ canvas.addEventListener('click', (event) => {
         const endY = connector.endShape.y + connector.endInput.y;
 
        
-
         // Calcula si el clic está cerca de la conexión
         const distance = Math.sqrt((mouseX - startX) ** 2 + (mouseY - startY) ** 2);
-        if (distance < 60) {
+        if (distance < 50) {
             // Cambia el estado isSelected del conector
             connector.isSelected = !connector.isSelected;
             selectedConnector = connector;
@@ -3168,7 +3224,6 @@ canvas.addEventListener('click', (event) => {
             return;
         }
     }
-
 
 });
 
@@ -3491,6 +3546,40 @@ function moveSelectedShape(direction) {
         }
         redraw();
     }
+}
+
+
+
+// Función para seleccionar un shape
+function selectShape(shape) {
+    if (!selectedShapes.includes(shape)) {
+        // Agrega el shape a la lista de seleccionados si no está presente
+        selectedShapes.push(shape);
+    }
+}
+
+// Función para deseleccionar un shape
+function deselectShape(shape) {
+    const index = selectedShapes.indexOf(shape);
+    if (index !== -1) {
+        // Elimina el shape de la lista de seleccionados si está presente
+        selectedShapes.splice(index, 1);
+    }
+}
+
+// Función para alternar la selección de un shape (selecciona si no está seleccionado, deselecciona si ya está seleccionado)
+function toggleShapeSelection(shape) {
+    if (selectedShapes.includes(shape)) {
+        deselectShape(shape);
+    } else {
+        selectShape(shape);
+    }
+}
+
+// Función para dibujar el rectángulo de selección
+function drawSelectionRect(rect) {
+    ctx.fillStyle = 'rgba(0, 0, 255, 0.3)';
+    ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 }
 
     </script>
