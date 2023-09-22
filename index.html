@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shapes con Conectores en Canvas</title>
+    <title>Logic Gates Lab</title>
     <style>
 @import 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet';
 
@@ -1755,6 +1755,8 @@ button:hover svg {
 
         // Define una variable para mantener un registro de los shapes seleccionados
         const selectedShapes = [];
+        // Define una variable para mantener un portapapeles temporal
+        const clipboard = [];
 
         canvas.addEventListener('mousedown', (event) => {
             const mouseX = event.offsetX;
@@ -3581,6 +3583,77 @@ function drawSelectionRect(rect) {
     ctx.fillStyle = 'rgba(0, 0, 255, 0.3)';
     ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 }
+
+// Función para copiar las shapes seleccionadas al portapapeles
+function copySelectedShapes() {
+    clipboard.length = 0; // Vacía el portapapeles actual
+
+    for (const selectedShape of selectedShapes) {
+        // Clona las shapes seleccionadas (puedes ajustar esta lógica según tus necesidades)
+        const clonedShape = { ...selectedShape };
+        clipboard.push(clonedShape);
+    }
+}
+
+// Función para cortar las shapes seleccionadas al portapapeles y eliminarlas
+function cutSelectedShapes() {
+    copySelectedShapes(); // Copia las shapes al portapapeles
+    deleteSelectedShapes(); // Elimina las shapes seleccionadas
+}
+
+// Función para pegar las shapes desde el portapapeles
+function pasteShapes() {
+    // Calcula una posición de pegado para las shapes
+    const pasteX = 50; // Ajusta según tu diseño
+    const pasteY = 50; // Ajusta según tu diseño
+
+    for (const clipboardShape of clipboard) {
+        // Clona las shapes desde el portapapeles y ajusta sus posiciones
+        const newShape = { ...clipboardShape };
+        newShape.x += pasteX;
+        newShape.y += pasteY;
+
+        // Agrega la shape clonada al lienzo
+        shapes.push(newShape);
+    }
+
+    // Redibuja el lienzo para mostrar las shapes pegadas
+    redraw();
+}
+
+// Función para eliminar las shapes seleccionadas
+function deleteSelectedShapes() {
+    for (const selectedShape of selectedShapes) {
+        const index = shapes.indexOf(selectedShape);
+        if (index !== -1) {
+            shapes.splice(index, 1);
+        }
+    }
+
+    // Limpia la selección después de eliminar las shapes
+    selectedShapes.length = 0;
+
+    // Redibuja el lienzo para reflejar los cambios
+    redraw();
+}
+
+// ...
+
+// Agrega eventos de teclado para copiar, cortar y pegar (Ctrl+C, Ctrl+X, Ctrl+V)
+document.addEventListener('keydown', (event) => {
+    if (event.ctrlKey) {
+        if (event.key === 'c' || event.key === 'C') {
+            // Ctrl+C: Copiar las shapes seleccionadas al portapapeles
+            copySelectedShape();
+        } else if (event.key === 'x' || event.key === 'X') {
+            // Ctrl+X: Cortar las shapes seleccionadas al portapapeles y eliminarlas
+            cutSelectedShape();
+        } else if (event.key === 'v' || event.key === 'V') {
+            // Ctrl+V: Pegar las shapes desde el portapapeles
+            pasteShape();
+        }
+    }
+});
 
     </script>
 </body>
