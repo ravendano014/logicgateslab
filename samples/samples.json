@@ -1,5 +1,9 @@
 [
   {
+    "name": "Help & How To",
+    "url": "https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/Help.json"
+  },
+  {
     "name": "BCD to 7 Segment Gates",
     "url": "https://raw.githubusercontent.com/ravendano014/logicgateslab/main/samples/BCD_to_7_Segment_Gates.json"
   },
