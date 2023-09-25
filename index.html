@@ -434,11 +434,43 @@ button:hover svg {
                 <input type="number" id="shapeX"><br>
                 <label for="shapeY">Y:</label>
                 <input type="number" id="shapeY"><br>
+                <label for="font">Select Font type:</label>
+                <select id="fontSelect">
+                    <option value="14px Arial">Arial, sans-serif</option>
+                    <option value="14px Helvetica">Helvetica, sans-serif</option>
+                    <option value="14px Verdana">Verdana, sans-serif</option>
+                    <option value="14px Tahoma">Tahoma, sans-serif</option>
+                    <option value="14px Georgia">Georgia, serif</option>
+                    <option value="14px Times New Roman">Times New Roman, serif</option>
+                    <option value="14px Palatino">Palatino, serif</option>
+                    <option value="14px Courier New">Courier New, monospace</option>
+                    <option value="14px Lucida Console">Lucida Console, monospace</option>
+                    <option value="14px Trebuchet MS">Trebuchet MS, sans-serif</option>
+                    <option value="14px Century Gothic">Century Gothic, sans-serif</option>
+                    <option value="14px Arial Black">Arial Black, sans-serif</option>
+                    <option value="14px Comic Sans MS">Comic Sans MS, sans-serif</option>
+                    <option value="14px Impact">Impact, sans-serif</option>
+                    <option value="14px Garamond">Garamond, serif</option>
+                    <option value="14px Bookman">Bookman, serif</option>
+                    <option value="14px Copperplate">Copperplate, sans-serif</option>
+                </select>
                 <select id="colorSelect">
                     <option value="red">Red</option>
                     <option value="green">Green</option>
                     <option value="blue">Blue</option>
                     <option value="yellow">Yellow</option>
+                    <option value="orange">Orange</option>
+                    <option value="purple">Purple</option>
+                    <option value="pink">Pink</option>
+                    <option value="brown">Brown</option>
+                    <option value="black">Black</option>
+                    <option value="white">White</option>
+                    <option value="gray">Gray</option>
+                    <option value="silver">Silver</option>
+                    <option value="gold">Gold</option>
+                    <option value="cyan">Cyan</option>
+                    <option value="magenta">Magenta</option>
+                    <option value="lime">Lime</option>
                 </select>
                 <!-- Campos para editar las etiquetas de los inputs y outputs -->
                 <h4>Inputs:</h4>
@@ -2525,7 +2557,8 @@ const newShape = {
     name: randomName(),
     isRunning: false, // Indicador para controlar si el reloj está en funcionamiento
     intervalId: null, // Identificador del intervalo para el pulso
-    color: 'black' // Inicialmente blanco
+    color: 'black', // Inicialmente blanco
+    font: '14px Arial'
 };
 
 // Define los puntos de entrada y salida para las formas creadas desde la barra lateral
@@ -2852,7 +2885,7 @@ redraw();
             }
 
             // Dibuja el nombre del tipo de forma en el centro
-            ctx.font = '14px Arial';
+            ctx.font = shape.font;
             ctx.fillStyle = shape.color;
             ctx.textAlign = 'center';
             if(shapeLabels!=0 ){
@@ -3630,6 +3663,7 @@ function showShapeProperties(shape) {
     const shapeLabelInput = document.getElementById('shapeLabel');
     const shapeXInput = document.getElementById('shapeX');
     const shapeYInput = document.getElementById('shapeY');
+    const fontSelect = document.getElementById('fontSelect'); // Campo de selección de Tipo de Letra
     const colorSelect = document.getElementById('colorSelect'); // Campo de selección de color
     const applyButton = document.getElementById('applyProperties');
     const inputsContainer = document.getElementById('inputsContainer'); // Contenedor para inputs
@@ -3639,6 +3673,7 @@ function showShapeProperties(shape) {
     shapeLabelInput.value = shape.label;
     shapeXInput.value = shape.x;
     shapeYInput.value = shape.y;
+    fontSelect.value = shape.font; // Configurar el valor del campo de selección de Tipo de Letra
     colorSelect.value = shape.color; // Configurar el valor del campo de selección de color
 
     // Eliminar campos de entrada anteriores (si los hay)
@@ -3677,6 +3712,7 @@ function showShapeProperties(shape) {
         shape.x = parseInt(shapeXInput.value);
         shape.y = parseInt(shapeYInput.value);
         shape.color = colorSelect.value; // Actualizar el color desde el campo de selección de color
+        shape.font = fontSelect.value; // Actualizar el Tipo de Letra desde el campo de selección de color
 
         // Actualizar las etiquetas de inputs desde los campos de entrada
         for (let i = 0; i < shape.inputs.length; i++) {
@@ -3865,3 +3901,4 @@ document.addEventListener('keydown', (event) => {
     </script>
 </body>
 </html>
+
