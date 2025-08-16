@@ -167,8 +167,8 @@ padding: 10px 0 10px 30px
             }
 
             .canvas-container {
-                margin-left: 160px; /* Espacio para la barra lateral */
-              background-color: #fff;
+                margin-left: calc(var(--sidebar-width) + 24px); /* Espacio para la barra lateral */
+                background-color: #fff;
             }
 
             /* Oculta inicialmente el contenido del grupo */
@@ -1694,31 +1694,31 @@ button:hover svg {
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
 
-        // Función para una compuerta NAND
+        // Funciones para compuertas lógicas
         function andGate(a, b) {
-            return (a && b);
+            return a && b;
         }
         function nandGate(a, b) {
             return !(a && b);
         }
         function orGate(a, b) {
-            return (a || b);
+            return a || b;
         }
         function norGate(a, b) {
             return !(a || b);
         }
         function xorGate(a, b) {
-            return (a && !b) || (!a && b);
+            return a !== b;
         }
         function notGate(a) {
-            return !(a);
+            return !a;
         }
 
-        function logicvalue(value){
-            return value?"1":"0";
+        function logicValue(value){
+            return value ? "1" : "0";
         }
-        function binaryvalue(value){
-            return value=="1"?true:false;
+        function binaryValue(value){
+            return value === "1";
         }
 
         function drawPattern() {
@@ -2173,10 +2173,8 @@ button:hover svg {
             } else if (gateShape.type === "NOR" || gateShape.type === "NOR3") {
                 outputValues.push(!(inputValues.some(value => value === true)));
             } else if (gateShape.type === "XOR" || gateShape.type === "XNOR") {
-                // XOR y XNOR pueden tener múltiples salidas
-                outputValues = inputValues.map(value => {
-                    return gateShape.type === "XOR" ? (value ? 0 : 1) : (value ? 1 : 0);
-                });
+                const xorResult = inputValues.reduce((acc, val) => acc !== val, false);
+                outputValues.push(gateShape.type === "XOR" ? xorResult : !xorResult);
             } else if (gateShape.type === "SR_Flip_Flop" || gateShape.type === "D_Flip_Flop" || gateShape.type === "T_Flip_Flop" || gateShape.type === "JK_Flip_Flop" ) {
                 // Flip Flops pueden tener múltiples salidas
                 outputValues = [];
@@ -2412,7 +2410,7 @@ button:hover svg {
                 Qbar = !Q;
             }
 
-            // console.log('A',logicvalue(preset),'B', logicvalue(clear),'Q', logicvalue(Q),'Q`', logicvalue(Qbar),'CLK', logicvalue(clock),'value', binaryvalue(Q)) ;
+            // console.log('A',logicValue(preset),'B', logicValue(clear),'Q', logicValue(Q),'Q`', logicValue(Qbar),'CLK', logicValue(clock),'value', binaryValue(Q));
 
             return [Q, Qbar];
         }
