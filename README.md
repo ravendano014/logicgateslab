@@ -8,6 +8,8 @@ Howdy 👋, wanna know more about basic electronics...
 ![Captura de Pantalla 1](Demo.gif)
 
 [Live Demo](https://ravendano014.github.io/logicgateslab/index.html)
+
+New version on development:  [Repo Google AI Studio](https://github.com/ravendano014/LogicGatesLabV2-05)
  
 ## Overview 
 
